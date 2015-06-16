@@ -1,4 +1,5 @@
 import datetime
+import os
 
 # indentation stuff
 
@@ -11,8 +12,8 @@ CONTENT_INDENT_LEVEL = 2
 
 def generate_indents(indent_level):
   indents = ""
-  for x in range(indent_level):
-    indnets = indents + "\t"
+  for x in xrange(indent_level):
+    indents = indents + "\t"
   return indents
 
 HTML_INDENTS    = generate_indents(HTML_INDENT_LEVEL)
@@ -41,7 +42,7 @@ CLOSE_BODY    = "%s</BODY>\n" % (BODY_INDENTS)
 OPEN_TITLE    = "%s<%s><%s>"   % (HEADING_INDENTS, HEADING_ALIGNMENT, HEADING_TYPE)
 CLOSE_TITLE   = "</%s></%s>\n" % (HEADING_TYPE, HEADING_ALIGNMENT)
 
-OPEN_CONTENT  = "%s<BR/><%s><img src=\"" % (CONTENT_INDENTS, CONTENT_ALIGNMENT)
+OPEN_CONTENT  = "%s<BR/>\n%s<%s><img src=\"" % (CONTENT_INDENTS, CONTENT_INDENTS, CONTENT_ALIGNMENT)
 CLOSE_CONTENT = "\"/></%s>\n"           % (CONTENT_ALIGNMENT)
 
 
@@ -56,10 +57,17 @@ def generate_title(post_name):
 def generate_content(content):
   return "%s%s%s" % (OPEN_CONTENT, content, CLOSE_CONTENT)
   
+# set up
+
+def bookkeep_directory(date):
+  if not os.path.exists(date):
+    os.makedirs(date)
+
 def paste(content, date_string):
   date = datetime.datetime.strptime(date_string, "%m/%d/%y")
   post_name = date.strftime("%m-%d-%Y")
-  post_file_name = post_name + ".html"
+  bookkeep_directory(post_name)
+  post_file_name = post_name + "/index.html"
   post_file = open(post_file_name, 'w')
   post_file.write(OPEN_HTML)
   post_file.write(generate_header(post_name))
